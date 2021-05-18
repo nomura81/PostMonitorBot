@@ -1,3 +1,6 @@
+# AWS Lambdaデプロイ用のzipは無視
+PostMonitorBot.zip
+
 # Logs
 logs
 *.log
