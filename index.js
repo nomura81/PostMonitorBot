@@ -3,7 +3,7 @@
 // モジュールの呼び出し
 const line = require('@line/bot-sdk');
 
-// インスタンス生成
+// LineBotインスタンス生成
 const config = {
     channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
     channelSecret: process.env.CHANNEL_SECRET,
@@ -27,5 +27,22 @@ exports.handler = (event, context) => {
     //     binaryParserEnabled: true
     // }
 
-    context.succeed('End Function');
+    // Lineで返答するメッセージ
+    const jstDate = new Date(Date.now() + ((new Date().getTimezoneOffset() + (9 * 60)) * 60 * 1000));
+    const messageText = `${jstDate.toLocaleString('ja-JP')}\n📮 郵便がポストに届きました`;
+
+    // Lineに通知する
+    client.pushMessage(userId, {
+        type: 'text',
+        text: messageText
+    }).then((response) => {
+        let lambdaResponse = {
+            statusCode: 200,
+            headers: {"X-Line-Status": "OK"},
+            body: '{"result": "completed"}'
+        }
+        context.succeed(lambdaResponse);
+    }).catch((err) => {
+        console.log(err);
+    });
 }
